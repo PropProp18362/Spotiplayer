@@ -1,0 +1,70 @@
+name: spoti_visualizer
+description: "A beautiful Spotify Visualizer with multiple visualization styles and full Spotify integration."
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.8.1
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # UI & Design
+  cupertino_icons: ^1.0.8
+  google_fonts: ^6.1.0
+  flutter_animate: ^4.2.0+1
+  glassmorphism: ^3.0.0
+  
+  # Audio & Visualization
+  audioplayers: ^5.2.1
+  audio_session: ^0.1.16
+  flutter_audio_capture: ^1.0.5
+# fftea: ^1.0.2  # Removed due to compilation issues
+  
+  # HTTP & API
+  http: ^1.1.0
+  dio: ^5.3.2
+  
+  # State Management
+  provider: ^6.1.1
+  riverpod: ^2.4.9
+  flutter_riverpod: ^2.4.9
+  
+  # Storage & Security
+  shared_preferences: ^2.2.2
+  # flutter_secure_storage: ^9.0.0  # Removed due to Windows build issues
+  
+  # Utilities
+  url_launcher: ^6.2.1
+  path_provider: ^2.1.1
+  permission_handler: ^11.0.1
+  
+  # Windows specific
+  window_manager: ^0.3.7
+  
+  # Math & Animation
+  vector_math: ^2.1.4
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  # The "flutter_lints" package below contains a set of recommended lints to
+  # encourage good coding practices. The lint set provided by the package is
+  # activated in the `analysis_options.yaml` file located at the root of your
+  # package. See that file for information about deactivating specific lint
+  # rules and activating additional ones.
+  flutter_lints: ^5.0.0
+
+# For information on the generic Dart part of this file, see the
+# following page: https://dart.dev/tools/pub/pubspec
+
+# The following section is specific to Flutter packages.
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/images/
+    - assets/icons/
