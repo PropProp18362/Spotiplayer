@@ -1,0 +1,9 @@
+{
+  "name": "spotiplayer",
+  "version": "1.0.0",
+  "description": "A beautiful Spotify Visualizer with multiple visualization styles",
+  "scripts": {
+    "build": "chmod +x ./build.sh && ./build.sh"
+  },
+  "private": true
+}

@@ -1,31 +1,14 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "build/web/**",
-      "use": "@vercel/static"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "/build/web/$1"
-    },
-    {
-      "src": "/auth/callback",
-      "dest": "/build/web/index.html"
-    },
-    {
-      "handle": "filesystem"
-    },
-    {
-      "src": "/.*",
-      "dest": "/build/web/index.html"
-    }
+  "buildCommand": "flutter build web --release",
+  "outputDirectory": "build/web",
+  "rewrites": [
+    { "source": "/auth/callback", "destination": "/index.html" },
+    { "source": "/(.*)", "destination": "/$1" }
   ],
   "headers": [
     {
-      "source": "/build/web/(.*)",
+      "source": "/(.*)\\.(.*)$",
       "headers": [
         {
           "key": "Cache-Control",
@@ -34,7 +17,7 @@
       ]
     },
     {
-      "source": "/build/web/index.html",
+      "source": "/index.html",
       "headers": [
         {
           "key": "Cache-Control",
@@ -42,5 +25,6 @@
         }
       ]
     }
-  ]
+  ],
+  "trailingSlash": false
 }
