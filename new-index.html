@@ -381,6 +381,11 @@
       <div style="margin-top: 10px; font-size: 0.8rem; color: rgba(255,255,255,0.6);">
         Having trouble? <a href="#" id="show-debug" style="color: var(--accent); text-decoration: underline;">Show debug info</a> or press Ctrl+D
       </div>
+      <div style="margin-top: 20px; padding: 10px; background: rgba(255,255,255,0.1); border-radius: 8px; max-width: 500px;">
+        <strong style="color: var(--accent);">Important:</strong> Make sure your Spotify Developer Dashboard has this <strong>exact</strong> redirect URI:
+        <code style="display: block; margin-top: 8px; padding: 8px; background: rgba(0,0,0,0.3); border-radius: 4px; word-break: break-all;">https://spotiplayer-tau.vercel.app/</code>
+        <small style="display: block; margin-top: 8px;">The trailing slash is important! It must match exactly.</small>
+      </div>
     </div>
 
     <div class="features">
@@ -484,30 +489,9 @@
     // Spotify API credentials
     const clientId = 'd37b7146ee274b33bf6539611a0c307e';
     
-    // Determine the correct redirect URI based on the current URL
-    function getRedirectUri() {
-      const hostname = window.location.hostname;
-      const protocol = window.location.protocol;
-      
-      // Check if we're on localhost
-      if (hostname === 'localhost' || hostname === '127.0.0.1') {
-        return `${protocol}//${hostname}:4200`;
-      }
-      
-      // Check if we're on the production domains
-      if (hostname.includes('spotiplayer-tau.vercel.app')) {
-        return 'https://spotiplayer-tau.vercel.app/';
-      }
-      
-      if (hostname.includes('spotiplayer.vercel.app')) {
-        return 'https://spotiplayer.vercel.app/';
-      }
-      
-      // Fallback to the current origin
-      return window.location.origin;
-    }
-    
-    const redirectUri = getRedirectUri();
+    // IMPORTANT: This must match EXACTLY what's in the Spotify Developer Dashboard
+    // Using hardcoded value to ensure it matches
+    const redirectUri = 'https://spotiplayer-tau.vercel.app/';
     console.log('Using redirect URI:', redirectUri);
     
     // Spotify API endpoints
@@ -680,7 +664,7 @@
       body.append('code', code);
       body.append('redirect_uri', redirectUri);
       body.append('client_id', clientId);
-      body.append('client_secret', 'e63d3d9982c84339bbe9c0c0fe012f50');
+      body.append('client_secret', '73a3292d161147f898e7c4fb52fe3498');
       
       console.log('Using redirect URI for token exchange:', redirectUri);
       
@@ -765,7 +749,7 @@
       body.append('grant_type', 'refresh_token');
       body.append('refresh_token', refreshToken);
       body.append('client_id', clientId);
-      body.append('client_secret', 'e63d3d9982c84339bbe9c0c0fe012f50');
+      body.append('client_secret', '73a3292d161147f898e7c4fb52fe3498');
       
       fetch(tokenEndpoint, {
         method: 'POST',
