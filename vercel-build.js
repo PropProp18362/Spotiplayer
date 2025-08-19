@@ -26,14 +26,16 @@ function build() {
       fs.mkdirSync('build/web/auth/callback');
     }
     
-    // Read static HTML content
-    console.log('Reading static HTML file...');
-    const staticHtml = fs.readFileSync('static-index.html', 'utf8');
+    // Read new HTML content
+    console.log('Reading HTML file...');
+    const newHtml = fs.existsSync('new-index.html') 
+      ? fs.readFileSync('new-index.html', 'utf8')
+      : fs.readFileSync('static-index.html', 'utf8');
     
     // Write files
     console.log('Writing files to build directory...');
-    fs.writeFileSync('build/web/index.html', staticHtml);
-    fs.writeFileSync('build/web/auth/callback/index.html', staticHtml);
+    fs.writeFileSync('build/web/index.html', newHtml);
+    fs.writeFileSync('build/web/auth/callback/index.html', newHtml);
     
     // Create a simple manifest.json file
     const manifestJson = `{
@@ -41,7 +43,7 @@ function build() {
   "short_name": "SpotiPlayer",
   "start_url": ".",
   "display": "standalone",
-  "background_color": "#121212",
+  "background_color": "#050505",
   "theme_color": "#1DB954",
   "description": "A beautiful Spotify music visualizer",
   "orientation": "portrait-primary"
