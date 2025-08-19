@@ -16,16 +16,6 @@ function build() {
       fs.mkdirSync('build/web');
     }
     
-    // Create auth directory
-    if (!fs.existsSync('build/web/auth')) {
-      fs.mkdirSync('build/web/auth');
-    }
-    
-    // Create callback directory
-    if (!fs.existsSync('build/web/auth/callback')) {
-      fs.mkdirSync('build/web/auth/callback');
-    }
-    
     // Read new HTML content
     console.log('Reading HTML file...');
     const newHtml = fs.existsSync('new-index.html') 
