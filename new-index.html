@@ -491,20 +491,20 @@
       
       // Check if we're on localhost
       if (hostname === 'localhost' || hostname === '127.0.0.1') {
-        return `${protocol}//${hostname}:4200/auth/callback`;
+        return `${protocol}//${hostname}:4200`;
       }
       
       // Check if we're on the production domains
       if (hostname.includes('spotiplayer-tau.vercel.app')) {
-        return 'https://spotiplayer-tau.vercel.app/auth/callback';
+        return 'https://spotiplayer-tau.vercel.app/';
       }
       
       if (hostname.includes('spotiplayer.vercel.app')) {
-        return 'https://spotiplayer.vercel.app/auth/callback';
+        return 'https://spotiplayer.vercel.app/';
       }
       
-      // Fallback to the current origin + path
-      return `${window.location.origin}/auth/callback`;
+      // Fallback to the current origin
+      return window.location.origin;
     }
     
     const redirectUri = getRedirectUri();
@@ -635,6 +635,7 @@
         loadingElement.style.display = 'flex';
         
         debugLog('Authorization code received', { code: code.substring(0, 10) + '...' });
+        debugLog('Using redirect URI', { redirectUri });
         
         // Exchange code for access token
         exchangeCodeForToken(code);
@@ -656,6 +657,8 @@
           refreshAccessToken(storedRefreshToken);
         } else {
           debugLog('No stored tokens found');
+          // Show debug panel by default to help troubleshoot
+          document.getElementById('debug-panel').style.display = 'block';
         }
       }
     };

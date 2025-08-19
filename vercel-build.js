@@ -35,7 +35,6 @@ function build() {
     // Write files
     console.log('Writing files to build directory...');
     fs.writeFileSync('build/web/index.html', newHtml);
-    fs.writeFileSync('build/web/auth/callback/index.html', newHtml);
     
     // Create a simple manifest.json file
     const manifestJson = `{
