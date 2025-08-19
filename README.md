@@ -181,6 +181,23 @@ For detailed web deployment instructions, see [DEPLOYMENT.md](DEPLOYMENT.md) and
 
 This is a personal project, but suggestions and feedback are welcome!
 
+## Repository Privacy
+
+This repository should be kept private due to the sensitive nature of the Spotify API credentials.
+
+### Making the Repository Private
+
+1. Go to [GitHub Repository Settings](https://github.com/PropProp18362/Spotiplayer/settings)
+2. Scroll down to the "Danger Zone"
+3. Click "Change repository visibility"
+4. Select "Make private" and follow the prompts
+
+Alternatively, you can use the provided script:
+```bash
+node make-repo-private.js
+```
+(Note: You'll need to edit the script and add your personal access token first)
+
 ## License
 
 This project is for personal use. Spotify integration requires compliance with Spotify's Terms of Service.
