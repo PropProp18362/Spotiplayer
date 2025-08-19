@@ -2,36 +2,41 @@ const fs = require('fs');
 const path = require('path');
 
 // Main build function
-async function build() {
+function build() {
   console.log('Starting Vercel build process for static web app...');
   
-  // Create build directories
-  console.log('Creating web directory structure...');
-  if (!fs.existsSync('build')) {
-    fs.mkdirSync('build');
-  }
-  if (!fs.existsSync('build/web')) {
-    fs.mkdirSync('build/web');
-  }
-  if (!fs.existsSync('build/web/auth')) {
-    fs.mkdirSync('build/web/auth');
-  }
-  
-  // Copy static HTML file to build directory
-  console.log('Copying static files...');
   try {
+    // Create build directories
+    console.log('Creating web directory structure...');
+    if (!fs.existsSync('build')) {
+      fs.mkdirSync('build');
+    }
+    
+    if (!fs.existsSync('build/web')) {
+      fs.mkdirSync('build/web');
+    }
+    
+    // Create auth directory
+    if (!fs.existsSync('build/web/auth')) {
+      fs.mkdirSync('build/web/auth');
+    }
+    
+    // Create callback directory
+    if (!fs.existsSync('build/web/auth/callback')) {
+      fs.mkdirSync('build/web/auth/callback');
+    }
+    
+    // Read static HTML content
+    console.log('Reading static HTML file...');
     const staticHtml = fs.readFileSync('static-index.html', 'utf8');
+    
+    // Write files
+    console.log('Writing files to build directory...');
     fs.writeFileSync('build/web/index.html', staticHtml);
-    // Also create a callback page
-    fs.writeFileSync('build/web/auth/callback', staticHtml);
     fs.writeFileSync('build/web/auth/callback/index.html', staticHtml);
-  } catch (error) {
-    console.error('Error copying static files:', error);
-    process.exit(1);
-  }
-  
-  // Create a simple manifest.json file
-  const manifestJson = `{
+    
+    // Create a simple manifest.json file
+    const manifestJson = `{
   "name": "SpotiPlayer",
   "short_name": "SpotiPlayer",
   "start_url": ".",
@@ -41,15 +46,16 @@ async function build() {
   "description": "A beautiful Spotify music visualizer",
   "orientation": "portrait-primary"
 }`;
-  
-  fs.writeFileSync('build/web/manifest.json', manifestJson);
-  
-  console.log('Static web files created successfully.');
-  console.log('Build process completed successfully!');
+    
+    fs.writeFileSync('build/web/manifest.json', manifestJson);
+    
+    console.log('Static web files created successfully.');
+    console.log('Build process completed successfully!');
+  } catch (error) {
+    console.error('Error during build process:', error);
+    process.exit(1);
+  }
 }
 
 // Run the build process
-build().catch(error => {
-  console.error('Build failed:', error);
-  process.exit(1);
-});
+build();
