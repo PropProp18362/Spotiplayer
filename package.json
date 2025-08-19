@@ -3,7 +3,10 @@
   "version": "1.0.0",
   "description": "A beautiful Spotify Visualizer with multiple visualization styles",
   "scripts": {
-    "build": "chmod +x ./build.sh && ./build.sh"
+    "build": "bash ./build.sh"
+  },
+  "engines": {
+    "node": ">=14.0.0"
   },
   "private": true
 }
