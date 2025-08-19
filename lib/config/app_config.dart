@@ -23,10 +23,10 @@ class AppConfig {
   ];
   
   // App configuration - MUST MATCH Spotify Developer Dashboard EXACTLY
-  // For local development
-  static const String redirectUri = 'http://localhost:4200/auth/callback';
-  // For production (commented out until deployment)
-  // static const String redirectUri = 'https://spoti-visualizer.vercel.app/auth/callback';
+  // For local development (commented out for production)
+  // static const String redirectUri = 'http://localhost:4200/auth/callback';
+  // For production
+  static const String redirectUri = 'https://spotiplayer.vercel.app/auth/callback';
   static const String appName = 'SpotiVisualizer';
   
 
