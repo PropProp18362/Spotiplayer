@@ -605,42 +605,7 @@
         clientId: clientId
       });
       
-      // Check for hash parameters (from server-side auth)
-      if (window.location.hash) {
-        const hashParams = new URLSearchParams(window.location.hash.substring(1));
-        const accessTokenFromHash = hashParams.get('access_token');
-        const refreshTokenFromHash = hashParams.get('refresh_token');
-        const expiresInFromHash = hashParams.get('expires_in');
-        const errorFromHash = hashParams.get('error');
-        
-        if (errorFromHash) {
-          debugLog('Authentication error from hash', { error: errorFromHash });
-          loadingElement.style.display = 'none';
-          document.getElementById('debug-panel').style.display = 'block';
-          alert(`Authentication Error: ${errorFromHash}\n\nPress Ctrl+D to see debug info.`);
-          return;
-        }
-        
-        if (accessTokenFromHash) {
-          debugLog('Tokens received from server-side auth');
-          
-          // Store tokens
-          accessToken = accessTokenFromHash;
-          refreshToken = refreshTokenFromHash;
-          const expiryTime = new Date().getTime() + (parseInt(expiresInFromHash) * 1000);
-          
-          localStorage.setItem('spotify_access_token', accessToken);
-          localStorage.setItem('spotify_refresh_token', refreshToken);
-          localStorage.setItem('token_expiry', expiryTime.toString());
-          
-          // Remove hash from URL without refreshing the page
-          window.history.replaceState({}, document.title, '/');
-          
-          // Initialize player
-          initializePlayer();
-          return;
-        }
-      }
+      // We're using direct client-side auth only
       
       // Check for error parameter in query string (from client-side auth)
       const urlParams = new URLSearchParams(window.location.search);
@@ -697,13 +662,9 @@
     
     // Handle login button click
     spotifyLoginButton.addEventListener('click', function() {
-      // Use the server-side login route if available, otherwise use client-side flow
-      if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
-        window.location.href = '/login';
-      } else {
-        const authUrl = `${authEndpoint}?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${encodeURIComponent(scopes.join(' '))}&response_type=code&show_dialog=true`;
-        window.location.href = authUrl;
-      }
+      // Always use client-side flow for now
+      const authUrl = `${authEndpoint}?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${encodeURIComponent(scopes.join(' '))}&response_type=code&show_dialog=true`;
+      window.location.href = authUrl;
     });
     
     // Exchange authorization code for access token
@@ -796,79 +757,44 @@
     function refreshAccessToken(refreshToken) {
       loadingElement.style.display = 'flex';
       
-      // Use server-side refresh token endpoint if available
-      if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
-        fetch('/refresh_token', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ refresh_token: refreshToken })
-        })
-        .then(response => {
-          if (!response.ok) {
-            throw new Error('HTTP status ' + response.status);
-          }
-          return response.json();
-        })
-        .then(data => {
-          accessToken = data.access_token;
-          
-          // Store new access token
-          const expiryTime = new Date().getTime() + (data.expires_in * 1000);
-          localStorage.setItem('spotify_access_token', accessToken);
-          localStorage.setItem('token_expiry', expiryTime.toString());
-          
-          // Initialize player
-          initializePlayer();
-        })
-        .catch(error => {
-          console.error('Error refreshing token:', error);
-          loadingElement.style.display = 'none';
-          localStorage.removeItem('spotify_access_token');
-          localStorage.removeItem('spotify_refresh_token');
-          localStorage.removeItem('token_expiry');
-        });
-      } else {
-        // Client-side refresh token flow
-        const body = new URLSearchParams();
-        body.append('grant_type', 'refresh_token');
-        body.append('refresh_token', refreshToken);
-        body.append('client_id', clientId);
-        body.append('client_secret', 'e63d3d9982c84339bbe9c0c0fe012f50');
+      // Client-side refresh token flow
+      const body = new URLSearchParams();
+      body.append('grant_type', 'refresh_token');
+      body.append('refresh_token', refreshToken);
+      body.append('client_id', clientId);
+      body.append('client_secret', 'e63d3d9982c84339bbe9c0c0fe012f50');
+      
+      fetch(tokenEndpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: body
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('HTTP status ' + response.status);
+        }
+        return response.json();
+      })
+      .then(data => {
+        accessToken = data.access_token;
         
-        fetch(tokenEndpoint, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-          },
-          body: body
-        })
-        .then(response => {
-          if (!response.ok) {
-            throw new Error('HTTP status ' + response.status);
-          }
-          return response.json();
-        })
-        .then(data => {
-          accessToken = data.access_token;
-          
-          // Store new access token
-          const expiryTime = new Date().getTime() + (data.expires_in * 1000);
-          localStorage.setItem('spotify_access_token', accessToken);
-          localStorage.setItem('token_expiry', expiryTime.toString());
-          
-          // Initialize player
-          initializePlayer();
-        })
-        .catch(error => {
-          console.error('Error refreshing token:', error);
-          loadingElement.style.display = 'none';
-          localStorage.removeItem('spotify_access_token');
-          localStorage.removeItem('spotify_refresh_token');
-          localStorage.removeItem('token_expiry');
-        });
-      }
+        // Store new access token
+        const expiryTime = new Date().getTime() + (data.expires_in * 1000);
+        localStorage.setItem('spotify_access_token', accessToken);
+        localStorage.setItem('token_expiry', expiryTime.toString());
+        
+        // Initialize player
+        initializePlayer();
+      })
+      .catch(error => {
+        console.error('Error refreshing token:', error);
+        loadingElement.style.display = 'none';
+        localStorage.removeItem('spotify_access_token');
+        localStorage.removeItem('spotify_refresh_token');
+        localStorage.removeItem('token_expiry');
+      });
     }
     
     // Initialize the player
