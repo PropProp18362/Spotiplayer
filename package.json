@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "A beautiful Spotify Visualizer with multiple visualization styles",
   "scripts": {
-    "build": "bash ./build.sh"
+    "build": "node vercel-build.js"
   },
   "engines": {
     "node": ">=14.0.0"

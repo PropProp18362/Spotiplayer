@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+  <meta name="description" content="A beautiful Spotify music visualizer">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SpotiPlayer</title>
+  <style>
+    body {
+      background-color: #121212;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      font-family: 'Arial', sans-serif;
+      color: white;
+      text-align: center;
+    }
+    .container {
+      max-width: 600px;
+      padding: 20px;
+    }
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+      background: linear-gradient(to right, #1DB954, #1ED760);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    p {
+      font-size: 1.2rem;
+      line-height: 1.6;
+      margin-bottom: 30px;
+      color: #b3b3b3;
+    }
+    .spotify-button {
+      background-color: #1DB954;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 30px;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      text-decoration: none;
+      display: inline-block;
+      margin-top: 20px;
+    }
+    .spotify-button:hover {
+      background-color: #1ED760;
+    }
+    .features {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 40px;
+    }
+    .feature {
+      background-color: #282828;
+      padding: 20px;
+      border-radius: 10px;
+      width: 150px;
+      transition: transform 0.3s;
+    }
+    .feature:hover {
+      transform: translateY(-5px);
+    }
+    .feature h3 {
+      margin-top: 0;
+      color: #1DB954;
+    }
+    .feature p {
+      font-size: 0.9rem;
+      margin-bottom: 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>SpotiPlayer</h1>
+    <p>A beautiful Spotify music visualizer with multiple visualization styles that react to your music with bass response, beat detection, and customizable settings.</p>
+    
+    <a href="/auth/callback" class="spotify-button">Connect with Spotify</a>
+    
+    <div class="features">
+      <div class="feature">
+        <h3>Bars</h3>
+        <p>Classic frequency bars with bass response</p>
+      </div>
+      <div class="feature">
+        <h3>Circular</h3>
+        <p>360-degree frequency display</p>
+      </div>
+      <div class="feature">
+        <h3>Particles</h3>
+        <p>Dynamic particle system</p>
+      </div>
+      <div class="feature">
+        <h3>Waveform</h3>
+        <p>Smooth waveform visualization</p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
