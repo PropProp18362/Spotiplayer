@@ -352,7 +352,8 @@
 
     // Spotify Authentication
     const clientId = 'd37b7146ee274b33bf6539611a0c307e';
-    const redirectUri = 'https://spotiplayer-tau.vercel.app/';
+    // Use dynamic redirect URI based on current domain
+    const redirectUri = `${window.location.protocol}//${window.location.host}/`;
     const scopes = [
       'user-read-currently-playing',
       'user-read-playback-state',
@@ -439,9 +440,8 @@
       this.disabled = true;
       
       try {
-        // Build the authorization URL with the fixed redirect URI
-        const fixedRedirectUri = 'https://spotiplayer-tau.vercel.app/';
-        const authUrl = `${authEndpoint}?client_id=${clientId}&redirect_uri=${encodeURIComponent(fixedRedirectUri)}&scope=${encodeURIComponent(scopes.join(' '))}&response_type=code&show_dialog=true`;
+        // Use the dynamic redirect URI
+        const authUrl = `${authEndpoint}?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${encodeURIComponent(scopes.join(' '))}&response_type=code&show_dialog=true`;
         
         debugLog(`Auth URL: ${authUrl}`);
         
@@ -470,18 +470,16 @@
       window.isExchangingToken = true;
       
       try {
-        // Use the fixed redirect URI that matches Spotify Developer Dashboard
-        const fixedRedirectUri = 'https://spotiplayer-tau.vercel.app/';
-        
+        // Use the dynamic redirect URI
         // Create a temporary form to send the request
         const body = new URLSearchParams();
         body.append('grant_type', 'authorization_code');
         body.append('code', code);
-        body.append('redirect_uri', fixedRedirectUri);
+        body.append('redirect_uri', redirectUri);
         body.append('client_id', clientId);
         body.append('client_secret', '73a3292d161147f898e7c4fb52fe3498');
         
-        debugLog(`Using fixed redirect URI for token exchange: ${fixedRedirectUri}`);
+        debugLog(`Using dynamic redirect URI for token exchange: ${redirectUri}`);
         
         fetch(tokenEndpoint, {
           method: 'POST',

@@ -191,7 +191,8 @@
       try {
         // Create an iframe to load the Flutter web app
         const iframe = document.createElement('iframe');
-        iframe.src = '/web/index.html';
+        // Use absolute URL to avoid path issues
+        iframe.src = `${window.location.protocol}//${window.location.host}/web/index.html`;
         iframe.style.width = '100%';
         iframe.style.height = '100%';
         iframe.style.border = 'none';
