@@ -56,3 +56,6 @@ app.*.map.json
 
 # Temporary files
 *.tmp
+
+# Reference files
+/kaleidosync-master/
