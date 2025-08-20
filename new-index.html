@@ -1024,6 +1024,23 @@
         display: none;
       }
     }
+    
+    /* Spinner for loading states */
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    .spinner {
+      width: 20px;
+      height: 20px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: white;
+      animation: spin 1s ease-in-out infinite;
+      display: inline-block;
+      vertical-align: middle;
+      margin-right: 8px;
+    }
   </style>
 </head>
 <body>
@@ -1036,7 +1053,7 @@
       <svg class="logo-icon" width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM16.5 16.5C16.23 16.5 15.96 16.38 15.75 16.17C14.72 15.14 13.23 14.5 11.5 14.5C9.77 14.5 8.28 15.14 7.25 16.17C7.04 16.38 6.77 16.5 6.5 16.5C5.95 16.5 5.5 16.05 5.5 15.5C5.5 15.23 5.62 14.96 5.83 14.75C7.14 13.44 9.07 12.5 11.5 12.5C13.93 12.5 15.86 13.44 17.17 14.75C17.38 14.96 17.5 15.23 17.5 15.5C17.5 16.05 17.05 16.5 16.5 16.5ZM17.5 12C16.67 12 16 11.33 16 10.5C16 9.67 16.67 9 17.5 9C18.33 9 19 9.67 19 10.5C19 11.33 18.33 12 17.5 12ZM5.5 12C4.67 12 4 11.33 4 10.5C4 9.67 4.67 9 5.5 9C6.33 9 7 9.67 7 10.5C7 11.33 6.33 12 5.5 12Z" fill="currentColor"/>
       </svg>
-      <span class="logo-text">SpotiViz</span>
+      <span class="logo-text">SpotiPlayer</span>
     </div>
   </header>
 
@@ -1049,7 +1066,7 @@
           <span class="hero-title-line">music into <span class="accent-text">visual art</span></span>
         </h1>
         <p class="hero-description">
-          SpotiViz creates stunning real-time visualizations that respond to every beat, lyric, and mood of your Spotify music. Experience your favorite tracks in a completely new dimension.
+          SpotiPlayer creates stunning real-time visualizations that respond to every beat, lyric, and mood of your Spotify music. Experience your favorite tracks in a completely new dimension.
         </p>
         <div class="cta-container">
           <button id="spotify-login" class="cta-button">
@@ -1174,10 +1191,18 @@
     </div>
     
     <div class="redirect-notice">
-      <strong>Important:</strong> Make sure your Spotify Developer Dashboard has this <strong>exact</strong> redirect URI:
-      <code>https://spotiplayer-tau.vercel.app/</code>
+      <strong>Important:</strong> Make sure your Spotify Developer Dashboard has your current URL as the redirect URI:
+      <code id="current-redirect-uri"></code>
       <small>The trailing slash is important! It must match exactly.</small>
     </div>
+    <script>
+      // Update the redirect URI display when the page loads
+      window.addEventListener('DOMContentLoaded', function() {
+        const currentUri = window.location.origin + '/';
+        document.getElementById('current-redirect-uri').textContent = currentUri;
+        console.log('Current redirect URI:', currentUri);
+      });
+    </script>
   </div>
 
   <!-- Visualizer UI -->
@@ -1189,7 +1214,7 @@
           <svg class="logo-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM16.5 16.5C16.23 16.5 15.96 16.38 15.75 16.17C14.72 15.14 13.23 14.5 11.5 14.5C9.77 14.5 8.28 15.14 7.25 16.17C7.04 16.38 6.77 16.5 6.5 16.5C5.95 16.5 5.5 16.05 5.5 15.5C5.5 15.23 5.62 14.96 5.83 14.75C7.14 13.44 9.07 12.5 11.5 12.5C13.93 12.5 15.86 13.44 17.17 14.75C17.38 14.96 17.5 15.23 17.5 15.5C17.5 16.05 17.05 16.5 16.5 16.5ZM17.5 12C16.67 12 16 11.33 16 10.5C16 9.67 16.67 9 17.5 9C18.33 9 19 9.67 19 10.5C19 11.33 18.33 12 17.5 12ZM5.5 12C4.67 12 4 11.33 4 10.5C4 9.67 4.67 9 5.5 9C6.33 9 7 9.67 7 10.5C7 11.33 6.33 12 5.5 12Z" fill="currentColor"/>
           </svg>
-          <span class="logo-text">SpotiViz</span>
+          <span class="logo-text">SpotiPlayer</span>
         </div>
         <button class="sidebar-toggle" id="sidebar-toggle">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1422,7 +1447,7 @@
     
     // IMPORTANT: This must match EXACTLY what's in the Spotify Developer Dashboard
     // Using hardcoded value to ensure it matches
-    const redirectUri = 'https://spotiplayer-tau.vercel.app/';
+    const redirectUri = window.location.origin + '/';
     console.log('Using redirect URI:', redirectUri);
     
     // Spotify API endpoints
@@ -1711,9 +1736,23 @@
     
     // Handle login button click
     spotifyLoginButton.addEventListener('click', function() {
+      // Log the authentication attempt
+      console.log('Attempting Spotify authentication...');
+      console.log('Client ID:', clientId);
+      console.log('Redirect URI:', redirectUri);
+      console.log('Scopes:', scopes.join(' '));
+      
+      // Show loading state on button
+      this.innerHTML = '<div class="spinner"></div> Connecting...';
+      this.disabled = true;
+      
       // Always use client-side flow for now
       const authUrl = `${authEndpoint}?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${encodeURIComponent(scopes.join(' '))}&response_type=code&show_dialog=true`;
-      window.location.href = authUrl;
+      
+      // Add a small delay to show the loading state
+      setTimeout(() => {
+        window.location.href = authUrl;
+      }, 500);
     });
     
     // Exchange authorization code for access token
