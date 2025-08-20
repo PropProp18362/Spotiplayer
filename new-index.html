@@ -340,7 +340,7 @@
 
     // Spotify Authentication
     const clientId = 'd37b7146ee274b33bf6539611a0c307e';
-    const redirectUri = window.location.origin + '/';
+    const redirectUri = 'https://spotiplayer-tau.vercel.app/';
     const scopes = [
       'user-read-currently-playing',
       'user-read-playback-state',
@@ -363,7 +363,8 @@
     
     // Check for authentication response
     window.onload = function() {
-      debugLog(`Redirect URI: ${redirectUri}`);
+      debugLog(`Using fixed Redirect URI: ${redirectUri}`);
+      debugLog(`Client ID: ${clientId}`);
       
       // Parse URL parameters
       const urlParams = new URLSearchParams(window.location.search);
@@ -406,28 +407,41 @@
       this.innerHTML = '<div class="spinner"></div> Connecting...';
       this.disabled = true;
       
-      // Build the authorization URL
-      const authUrl = `${authEndpoint}?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${encodeURIComponent(scopes.join(' '))}&response_type=code&show_dialog=true`;
-      
-      // Add a small delay to show the loading state
-      setTimeout(() => {
-        window.location.href = authUrl;
-      }, 500);
+      try {
+        // Build the authorization URL with the fixed redirect URI
+        const fixedRedirectUri = 'https://spotiplayer-tau.vercel.app/';
+        const authUrl = `${authEndpoint}?client_id=${clientId}&redirect_uri=${encodeURIComponent(fixedRedirectUri)}&scope=${encodeURIComponent(scopes.join(' '))}&response_type=code&show_dialog=true`;
+        
+        debugLog(`Auth URL: ${authUrl}`);
+        
+        // Add a small delay to show the loading state
+        setTimeout(() => {
+          window.location.href = authUrl;
+        }, 500);
+      } catch (error) {
+        debugLog(`Error during authentication: ${error.message}`);
+        this.innerHTML = 'Connect with Spotify';
+        this.disabled = false;
+        document.getElementById('debug-panel').style.display = 'block';
+      }
     });
     
     // Exchange authorization code for access token
     function exchangeCodeForToken(code) {
       debugLog('Exchanging code for token...');
       
+      // Use the fixed redirect URI that matches Spotify Developer Dashboard
+      const fixedRedirectUri = 'https://spotiplayer-tau.vercel.app/';
+      
       // Create a temporary form to send the request
       const body = new URLSearchParams();
       body.append('grant_type', 'authorization_code');
       body.append('code', code);
-      body.append('redirect_uri', redirectUri);
+      body.append('redirect_uri', fixedRedirectUri);
       body.append('client_id', clientId);
       body.append('client_secret', '73a3292d161147f898e7c4fb52fe3498');
       
-      debugLog(`Using redirect URI for token exchange: ${redirectUri}`);
+      debugLog(`Using fixed redirect URI for token exchange: ${fixedRedirectUri}`);
       
       fetch(tokenEndpoint, {
         method: 'POST',
