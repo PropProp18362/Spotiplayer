@@ -3,6 +3,7 @@
   "buildCommand": "npm run build",
   "outputDirectory": "build/web",
   "rewrites": [
+    { "source": "/visualizer", "destination": "/web/index.html" },
     { "source": "/(.*)", "destination": "/index.html" }
   ],
   "headers": [
