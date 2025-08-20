@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+  <meta name="description" content="A beautiful Spotify Visualizer with multiple visualization styles and full Spotify integration.">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#000000">
+
+  <title>SpotiPlayer Visualizer</title>
+
+  <!-- iOS meta tags & icons -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="SpotiVisualizer">
+  <link rel="apple-touch-icon" href="icons/Icon-192.png">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="favicon.png"/>
+
+  <style>
+    body {
+      background-color: #050505;
+      color: #ffffff;
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      overflow: hidden;
+    }
+    
+    .loading {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      width: 100vw;
+    }
+    
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 3px solid rgba(29, 185, 84, 0.3);
+      border-radius: 50%;
+      border-top-color: #1DB954;
+      animation: spin 1s ease-in-out infinite;
+      margin-bottom: 20px;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    .message {
+      font-size: 1.2rem;
+      margin-top: 20px;
+      text-align: center;
+    }
+    
+    .error {
+      color: #ff5555;
+      margin-top: 10px;
+      max-width: 80%;
+      text-align: center;
+    }
+    
+    .button {
+      background-color: #1DB954;
+      color: white;
+      border: none;
+      border-radius: 30px;
+      padding: 10px 20px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 20px;
+      text-decoration: none;
+      display: inline-block;
+    }
+    
+    .button:hover {
+      background-color: #1ED760;
+    }
+    
+    #visualizer-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 10;
+    }
+    
+    #debug-panel {
+      position: fixed;
+      bottom: 1rem;
+      right: 1rem;
+      background: rgba(0, 0, 0, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 0.5rem;
+      padding: 1rem;
+      font-size: 0.8rem;
+      color: rgba(255, 255, 255, 0.7);
+      max-width: 400px;
+      z-index: 100;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="loading" id="loading">
+    <div class="spinner"></div>
+    <div class="message">Loading Spotify Visualizer...</div>
+    <div class="error" id="error-message" style="display: none;"></div>
+    <a href="/" class="button" id="back-button" style="display: none;">Back to Home</a>
+  </div>
+  
+  <div id="visualizer-container"></div>
+  
+  <div id="debug-panel">
+    <h3>Debug Information</h3>
+    <div id="debug-content"></div>
+    <button id="close-debug">Close</button>
+  </div>
+
+  <script>
+    // Debug logging
+    function debugLog(message) {
+      console.log(message);
+      const debugContent = document.getElementById('debug-content');
+      if (debugContent) {
+        const timestamp = new Date().toLocaleTimeString();
+        debugContent.innerHTML += `<pre>[${timestamp}] ${message}</pre>`;
+      }
+    }
+    
+    // Check for Spotify token
+    window.onload = function() {
+      const accessToken = localStorage.getItem('spotify_access_token');
+      const tokenExpiry = localStorage.getItem('spotify_token_expiry');
+      
+      if (!accessToken) {
+        showError('No Spotify access token found. Please connect with Spotify first.');
+        return;
+      }
+      
+      if (tokenExpiry && new Date().getTime() > parseInt(tokenExpiry)) {
+        showError('Your Spotify session has expired. Please reconnect with Spotify.');
+        return;
+      }
+      
+      debugLog('Valid Spotify token found, loading visualizer...');
+      
+      // Load the Flutter web app
+      loadFlutterApp();
+    };
+    
+    function showError(message) {
+      const errorElement = document.getElementById('error-message');
+      const backButton = document.getElementById('back-button');
+      const loadingSpinner = document.querySelector('.spinner');
+      const loadingMessage = document.querySelector('.message');
+      
+      if (errorElement) {
+        errorElement.textContent = message;
+        errorElement.style.display = 'block';
+      }
+      
+      if (backButton) {
+        backButton.style.display = 'inline-block';
+      }
+      
+      if (loadingSpinner) {
+        loadingSpinner.style.display = 'none';
+      }
+      
+      if (loadingMessage) {
+        loadingMessage.textContent = 'Error Loading Visualizer';
+      }
+      
+      debugLog(`Error: ${message}`);
+    }
+    
+    function loadFlutterApp() {
+      try {
+        // Create an iframe to load the Flutter web app
+        const iframe = document.createElement('iframe');
+        iframe.src = '/web/index.html';
+        iframe.style.width = '100%';
+        iframe.style.height = '100%';
+        iframe.style.border = 'none';
+        iframe.style.position = 'fixed';
+        iframe.style.top = '0';
+        iframe.style.left = '0';
+        iframe.style.zIndex = '10';
+        
+        // Add the iframe to the visualizer container
+        const container = document.getElementById('visualizer-container');
+        if (container) {
+          container.appendChild(iframe);
+          
+          // Hide the loading screen after a short delay
+          setTimeout(() => {
+            const loadingElement = document.getElementById('loading');
+            if (loadingElement) {
+              loadingElement.style.display = 'none';
+            }
+          }, 2000);
+        } else {
+          showError('Visualizer container not found.');
+        }
+      } catch (error) {
+        showError(`Failed to load visualizer: ${error.message}`);
+      }
+    }
+    
+    // Close debug panel
+    document.getElementById('close-debug').addEventListener('click', function() {
+      document.getElementById('debug-panel').style.display = 'none';
+    });
+    
+    // Show debug panel on Ctrl+D
+    document.addEventListener('keydown', function(event) {
+      if (event.key === 'D' && event.ctrlKey) {
+        const debugPanel = document.getElementById('debug-panel');
+        debugPanel.style.display = debugPanel.style.display === 'none' ? 'block' : 'none';
+      }
+    });
+  </script>
+</body>
+</html>
